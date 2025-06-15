@@ -205,7 +205,7 @@ class MaskTransformer(nn.Module):
     def encode_text(self, raw_text):
         device = next(self.parameters()).device
         text = clip.tokenize(raw_text, truncate=True).to(device)
-        feat_clip_text = self.clip_model.encode_text(text).float()
+        feat_clip_text = self.clip_model.encode_text(text).to(torch.float32)  # (b, clip_dim)
         return feat_clip_text
 
     def mask_cond(self, cond, force_mask=False):
@@ -403,7 +403,7 @@ class MaskTransformer(nn.Module):
                  is_predict_len=True
                  ):
         with torch.no_grad():
-            cond_vector = self.encode_text(conds)
+            cond_vector = self.encode_text(conds).to(torch.float32)
         is_softmax = True
         seq_len = 49 #max(m_lens)
         
